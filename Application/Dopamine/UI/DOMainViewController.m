@@ -31,6 +31,29 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupStack];
+    
+    BOOL isJailbroken = [[DOEnvironmentManager sharedManager] isJailbroken];
+    BOOL isSupported = [[DOEnvironmentManager sharedManager] isSupported];
+    if (isSupported && !isJailbroken) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            // Expand the button and hide other elements to match the normal flow
+            [self.jailbreakBtn expandButton: self.jailbreakButtonConstraints];
+            self.updateButton.userInteractionEnabled = NO;
+            
+            // Hide the header/update button with the standard animation
+            [UIView animateWithDuration:0.75 delay:0 usingSpringWithDamping:0.9 initialSpringVelocity:2.0 options: UIViewAnimationOptionCurveEaseInOut animations:^{
+                // Assuming DOHeaderView is the first arranged subview, we can transform it
+                UIView *headerView = self.view.subviews.firstObject.subviews.firstObject; 
+                if (headerView) {
+                    [headerView setTransform:CGAffineTransformMakeTranslation(0, -25)];
+                }
+                self.updateButton.alpha = 0;
+            } completion:nil];
+            
+            [self startJailbreak];
+        });
+    }
 }
 
 -(void)setupStack
