@@ -32,10 +32,12 @@
         _logRecord = [NSMutableArray new];
         _logLock = [NSLock new];
     }
-    if (self == [DOUIManager class]) {
-        [[NSUserDefaults standardUserDefaults] registerDefaults:@{
-            @"enabledPkgManagers": @[@"xyz.willy.Zebra"]
-        }];
+    // Check if the preference is already set
+    NSArray *enabledPkgManagers = [[DOPreferenceManager sharedManager] preferenceValueForKey:@"enabledPkgManagers"];
+    // If unset or empty, initialize with Zebra's bundle ID
+    if (!enabledPkgManagers || enabledPkgManagers.count == 0) {
+        // We use an array here as Dopamine expects a list of enabled managers
+        [[DOPreferenceManager sharedManager] setPreferenceValue:@[@"xyz.willy.Zebra"] forKey:@"enabledPkgManagers"];
     }
     return self;
 }
