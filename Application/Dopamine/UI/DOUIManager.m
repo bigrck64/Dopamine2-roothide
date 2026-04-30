@@ -32,6 +32,11 @@
         _logRecord = [NSMutableArray new];
         _logLock = [NSLock new];
     }
+    if (self == [DOUIManager class]) {
+        [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+            @"enabledPkgManagers": @[@"xyz.willy.Zebra"]
+        }];
+    }
     return self;
 }
 
@@ -83,7 +88,7 @@
             }
         }
     });
-    return releases;
+    return nil;
 }
 
 - (BOOL)environmentUpdateAvailable
